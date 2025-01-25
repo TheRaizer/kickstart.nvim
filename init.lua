@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -437,6 +437,56 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
+  -- Personal
+  { -- File Tree
+    'nvim-tree/nvim-tree.lua',
+    opts = { view = { preserve_window_proportions = true } },
+  },
+  { 'tpope/vim-eunuch', opts = {}, config = function() end },
+  {
+    'windwp/nvim-ts-autotag',
+    opts = {},
+  },
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^5', -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
+  {
+    'linux-cultist/venv-selector.nvim',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      'mfussenegger/nvim-dap',
+      'mfussenegger/nvim-dap-python', --optional
+      {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        dependencies = { 'nvim-lua/plenary.nvim', { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font } },
+      },
+    },
+    lazy = false,
+    branch = 'regexp', -- This is the regexp branch, use this for the new version
+    config = function()
+      require('venv-selector').setup()
+    end,
+    keys = {
+      { '<leader>vs', '<cmd>VenvSelect<cr>' },
+    },
+  },
+  { -- Aidan custom: Setup typescript-tools lsp replacement
+    'pmizio/typescript-tools.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+    opts = {},
+  },
+  { -- Ensure you run :call doge#install() in vim/nvim
+    'kkoomen/vim-doge',
+    config = function() end,
+    lazy = false,
+  },
+  {
+    'sindrets/diffview.nvim',
+    opts = {},
+  },
 
   -- LSP Plugins
   {
@@ -617,8 +667,13 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
+        gopls = {},
+        pyright = {},
+        fixjson = {},
+        html = {},
+        tailwindcss = {},
+        eslint = {},
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -714,10 +769,22 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black', stop_after_first = true },
         --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        -- You can use a sub-list to tell conform to run *until* a formatter
+        -- is found.
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        go = { 'gofmt' },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        rust = { 'rustfmt', lsp_format = 'fallback' },
+      },
+      formatters = {
+        shfmt = {
+          prepend_args = { '-i', '2' },
+        },
       },
     },
   },
