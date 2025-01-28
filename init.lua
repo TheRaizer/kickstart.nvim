@@ -166,6 +166,16 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.goto_prev()
+  vim.diagnostic.open_float()
+end, { desc = 'Go to previous diagnostic message' })
+
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.goto_next()
+  vim.diagnostic.open_float()
+end, { desc = 'Go to next diagnostic message' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -769,7 +779,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'isort', 'black', stop_after_first = true },
+        python = { 'black', stop_after_first = true },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
